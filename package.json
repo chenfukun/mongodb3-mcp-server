@@ -13,7 +13,22 @@
     "dev": "tsx src/index.ts",
     "inspect": "npx @modelcontextprotocol/inspector node dist/index.js"
   },
+  "author": "chenfukun",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chenfukun/mongodb3-mcp-server.git"
+  },
+  "homepage": "https://github.com/chenfukun/mongodb3-mcp-server",
+  "bugs": {
+    "url": "https://github.com/chenfukun/mongodb3-mcp-server/issues"
+  },
+  "keywords": [
+    "mcp",
+    "mongodb",
+    "mongodb3",
+    "model-context-protocol"
+  ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "mongodb": "^4.17.2",
