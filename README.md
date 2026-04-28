@@ -110,14 +110,14 @@ Add the following to your Kiro MCP config (`~/.kiro/settings/mcp.json`):
 | `db-stats` | Get database statistics |
 | `mongodb-logs` | Get recent mongod log entries |
 
-### Write (requires `--writable` or `MDB_MCP_READ_ONLY=false`) (3)
+### Write (requires `--writable` or `MDB_MCP_WRITABLE=true`) (3)
 | Tool | Description |
 |---|---|
 | `insert-many` | Insert documents into a collection |
 | `update-many` | Update documents matching a filter |
 | `delete-many` | Delete documents matching a filter |
 
-### Manage (requires `--writable` or `MDB_MCP_READ_ONLY=false`) (6)
+### Manage (requires `--writable` or `MDB_MCP_WRITABLE=true`) (6)
 | Tool | Description |
 |---|---|
 | `create-collection` | Create a new collection |
