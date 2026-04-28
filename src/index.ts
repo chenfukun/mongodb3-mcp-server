@@ -34,9 +34,11 @@ function parseConfig(): ServerConfig {
     if (positional) connectionString = positional;
   }
 
-  // Default to read-only for safety; use --writable or MDB_MCP_READ_ONLY=false to enable writes
-  const readOnly =
-    !(hasFlag("writable") || process.env.MDB_MCP_READ_ONLY === "false");
+  // Default to read-only for safety; use --writable or MDB_MCP_WRITABLE=true to enable writes
+  const readOnly = !(
+    hasFlag("writable") ||
+    process.env.MDB_MCP_WRITABLE === "true"
+  );
 
   const maxDocumentsPerQuery = parseInt(
     getArg("maxDocumentsPerQuery") ??

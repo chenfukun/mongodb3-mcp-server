@@ -35,23 +35,7 @@ MDB_MCP_CONNECTION_STRING="mongodb://localhost:27017" node dist/index.js
 
 ### Enable Write Mode
 
-By default, the server runs in **read-only mode** for safety. To enable write/delete operations, explicitly set `MDB_MCP_READ_ONLY` to `false` or pass `--writable`:
-
-```json
-{
-  "mcpServers": {
-    "MongoDB": {
-      "command": "node",
-      "args": ["/path/to/mongodb3-mcp-server/dist/index.js", "--writable"],
-      "env": {
-        "MDB_MCP_CONNECTION_STRING": "mongodb://localhost:27017"
-      }
-    }
-  }
-}
-```
-
-Or via environment variable:
+By default, the server runs in **read-only mode** for safety. To enable write/delete operations:
 
 ```json
 {
@@ -61,8 +45,30 @@ Or via environment variable:
       "args": ["/path/to/mongodb3-mcp-server/dist/index.js"],
       "env": {
         "MDB_MCP_CONNECTION_STRING": "mongodb://localhost:27017",
-        "MDB_MCP_READ_ONLY": "false"
+        "MDB_MCP_WRITABLE": "true"
       }
+    }
+  }
+}
+```
+
+> Pass `--writable` CLI flag as an alternative.
+
+### Kiro MCP Configuration
+
+Add the following to your Kiro MCP config (`~/.kiro/settings/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "dev-mongodb3": {
+      "command": "npx",
+      "args": ["mongodb3-mcp-server"],
+      "env": {
+        "MDB_MCP_WRITABLE": "false",
+        "MDB_MCP_CONNECTION_STRING": "mongodb://root:root@localhost:17017/admin?authSource=admin"
+      },
+      "disabled": true
     }
   }
 }
@@ -73,7 +79,7 @@ Or via environment variable:
 | Environment Variable / CLI Flag | Default | Description |
 |---|---|---|
 | `MDB_MCP_CONNECTION_STRING` / `--connectionString` | - | MongoDB connection string |
-| `MDB_MCP_READ_ONLY` / `--writable` | `true` (read-only) | Set `MDB_MCP_READ_ONLY=false` or pass `--writable` to enable write operations |
+| `MDB_MCP_WRITABLE` / `--writable` | `false` (read-only) | Set `MDB_MCP_WRITABLE=true` or pass `--writable` to enable write operations |
 | `MDB_MCP_MAX_DOCUMENTS_PER_QUERY` / `--maxDocumentsPerQuery` | `100` | Max documents per query |
 
 ## Supported Tools (23 tools)
