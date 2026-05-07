@@ -43,8 +43,9 @@ export async function findTool(
     config.maxDocumentsPerQuery
   );
 
-  let cursor = coll.find(args.filter as Document);
-  if (args.projection) cursor = cursor.project(args.projection);
+  const filter = EJSON.deserialize(args.filter as Document) as Document;
+  let cursor = coll.find(filter);
+  if (args.projection) cursor = cursor.project(EJSON.deserialize(args.projection as Document) as Document);
   if (args.sort) cursor = cursor.sort(args.sort as Record<string, 1 | -1>);
   cursor = cursor.limit(effectiveLimit);
 
@@ -80,7 +81,10 @@ export async function aggregateTool(
   const coll = db.collection(args.collection);
 
   // MongoDB 3.6 supports aggregation pipeline
-  const cursor = coll.aggregate(args.pipeline as Document[]);
+  const pipeline = args.pipeline.map(
+    (stage) => EJSON.deserialize(stage as Document) as Document
+  );
+  const cursor = coll.aggregate(pipeline);
   const documents: Document[] = [];
   let count = 0;
   for await (const doc of cursor) {
@@ -119,7 +123,10 @@ export async function aggregateDBTool(
   const db = connManager.getDatabase(args.database);
 
   // Database-level aggregate (MongoDB 3.6+)
-  const cursor = db.aggregate(args.pipeline as Document[]);
+  const pipeline = args.pipeline.map(
+    (stage) => EJSON.deserialize(stage as Document) as Document
+  );
+  const cursor = db.aggregate(pipeline);
   const documents: Document[] = [];
   let count = 0;
   for await (const doc of cursor) {
@@ -160,8 +167,9 @@ export async function countTool(
   const db = connManager.getDatabase(args.database);
   const coll = db.collection(args.collection);
 
+  const query = EJSON.deserialize(args.query as Document) as Document;
   // Use countDocuments which works on MongoDB 3.6+
-  const count = await coll.countDocuments(args.query as Document);
+  const count = await coll.countDocuments(query);
 
   return {
     content: [
@@ -209,7 +217,7 @@ export async function explainTool(
       explainCommand = {
         explain: {
           find: args.collection,
-          filter: args.filter ?? {},
+          filter: EJSON.deserialize((args.filter ?? {}) as Document) as Document,
         },
         verbosity: args.verbosity,
       };
@@ -218,7 +226,9 @@ export async function explainTool(
       explainCommand = {
         explain: {
           aggregate: args.collection,
-          pipeline: args.pipeline ?? [],
+          pipeline: (args.pipeline ?? []).map(
+            (stage) => EJSON.deserialize(stage as Document) as Document
+          ),
           cursor: {},
         },
         verbosity: args.verbosity,
@@ -228,7 +238,7 @@ export async function explainTool(
       explainCommand = {
         explain: {
           count: args.collection,
-          query: args.filter ?? {},
+          query: EJSON.deserialize((args.filter ?? {}) as Document) as Document,
         },
         verbosity: args.verbosity,
       };

@@ -21,7 +21,10 @@ export async function insertManyTool(
   const db = connManager.getDatabase(args.database);
   const coll = db.collection(args.collection);
 
-  const result = await coll.insertMany(args.documents as Document[]);
+  const documents = args.documents.map(
+    (doc) => EJSON.deserialize(doc as Document) as Document
+  );
+  const result = await coll.insertMany(documents);
   const insertedIds = Object.values(result.insertedIds).map(String);
 
   return {
@@ -65,7 +68,9 @@ export async function updateManyTool(
   const db = connManager.getDatabase(args.database);
   const coll = db.collection(args.collection);
 
-  const result = await coll.updateMany(args.filter as Document, args.update as Document, {
+  const filter = EJSON.deserialize(args.filter as Document) as Document;
+  const update = EJSON.deserialize(args.update as Document) as Document;
+  const result = await coll.updateMany(filter, update, {
     upsert: args.upsert,
   });
 
@@ -110,7 +115,8 @@ export async function deleteManyTool(
   const db = connManager.getDatabase(args.database);
   const coll = db.collection(args.collection);
 
-  const result = await coll.deleteMany(args.filter as Document);
+  const filter = EJSON.deserialize(args.filter as Document) as Document;
+  const result = await coll.deleteMany(filter);
 
   return {
     content: [
